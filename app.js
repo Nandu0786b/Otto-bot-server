@@ -10,7 +10,8 @@ import cookieParser from "cookie-parser";
 
 // routes
 import user from "./routes/userAuth.js";
-
+import stock from "./routes/stock.js";
+import alert from "./routes/alert.js";
 
 // express app 
 const app = express();
@@ -29,7 +30,8 @@ app.disable("x-powered-by");  //To hide backend stack from the hacker's
 
 // routes
 app.use("/v1/user", user); 
-
+app.use("/v1/stocks", stock); 
+app.use("/v1/alert", alert);
 
 
 
