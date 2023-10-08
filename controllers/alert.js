@@ -82,3 +82,31 @@ export const createAlert = async(req,res)=>{
             message:"Internal Server Problem"})
     }
 }
+
+export const allAlert = async(req,res)=>{
+    try {
+        const _id = req._id;
+        const userAlert = await AlertModel.find({user:_id});
+        if(!userAlert){
+            return res.status(400).json({
+                stat:"OK",
+                error: "",
+                Verified:true,
+                message:"Not found anything"
+            })
+        }
+        return res.status(200).json({
+            stat:"OK",
+            error: "",
+            Verified:true,
+            message:"found alert success",
+            alert:userAlert
+        })
+    } catch (error) {
+        return res.status(500).json({
+            stat:OK,
+            Error:error.message,
+            Verified:false,
+            message:"Internal Server Problem"})
+    }
+}
