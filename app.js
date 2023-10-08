@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 
 
 
+// routes
+import user from "./routes/userAuth.js";
 
 
 // express app 
@@ -25,6 +27,8 @@ app.use(cors());
 app.disable("x-powered-by");  //To hide backend stack from the hacker's
 
 
+// routes
+app.use("/v1/user", user); 
 
 
 
