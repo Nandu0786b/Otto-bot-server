@@ -48,3 +48,36 @@ export const addStock = async(req,res)=>{
             message:"Internal Server Problem"})
     }
 }
+
+export const stockList = async (req, res) => {
+  try {
+    // List of all stocks
+    const stocks = await StockListModel.find({});
+
+    if (stocks) {
+      return res.status(200).json({
+          stat:"OK",
+          error: "",
+          Verified:true,
+          message: 'Stocks retrieved successfully.',
+          stocks: stocks,
+      });
+    } else {
+      return res.status(404).json({
+          stat:"OK",
+          error: "",
+          Verified:true,
+          message: 'No stocks found.',
+          stocks: {}
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      stat:"OK",
+      error:error.message,
+      Verified:true,
+      message: 'An error occurred while retrieving stocks.',
+    });
+  }
+};
