@@ -117,3 +117,32 @@ export const subscriberUpdate = async(req,res)=>{
       });
     }
 }
+
+export const priceUpdate = async(req,res)=>{
+    try {
+        const stock = req.body.stock;
+        const newPrice = req.body.newPrice;
+        const updateddata = await StockListModel.findOneAndUpdate(
+            { stock: stock },
+            { $set: { price: newPrice } }, // Set the new price
+            { new: true } // Return the updated document
+        );
+
+
+         res.status(201).json({ 
+            stat:"OK",
+            error:'',
+            Verified:true,
+            message: 'Pice updated successfully',
+            stock:updateddata
+        });
+    } catch (error){
+        console.error(error);
+        return res.status(500).json({
+          stat:"OK",
+          error: error.message,
+          Verified:true,
+          message: 'An error occurred while retrieving stocks.',
+        });
+      }
+}
