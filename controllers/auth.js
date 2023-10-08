@@ -99,3 +99,85 @@ export const profile = async(req,res)=>{
 }
 
 
+
+// Below is the for user firbase token which will be handle from the frontend, during the last time
+export const token = async (req, res) => {
+  try {
+    // instead of direct token update, first save the token and create new variable called verified and run a service which will identify the user which registered in the last 5 minute and 
+    // and still token is not verified just send request to them and if success response from firebase then set verified true else delete the token
+    var fcm = new FCM(process.env.serverKey);
+    const id = req._id;
+    const token = req.body.token;
+    
+    if (!id || !token) {
+      return res.status(400).json({
+        "stat": "OK",
+        "error": "Missing data",
+        "Verified": true,
+        "message": "Access Denied, Please send all data"
+      });
+    }
+
+    // Find the user by ID and update the token and pushEnable
+    const user = await userModel.findByIdAndUpdate(
+      id,
+      { pushToken:token, pushEnable: true },
+      { new: true } // To get the updated user object
+    );
+
+    if (!user) {
+      return res.status(400).json({
+        "stat": "OK",
+        "error": "User not exist",
+        "Verified": false,
+        "message": "Access Denied, Please try again"
+      });
+    }
+
+    var message = {
+        to:token,
+            notification: {
+                title: `Hi, ${user.name} this is Test Alert`,
+                body: 'India becomes a $10 trillion economy.',
+            },
+    
+            data: { //you can send only notification or only data(or include both)
+                title: 'test',
+                body: '{"name" : "okg ooggle ogrlrl","product_id" : "123","final_price" : "0.00035"}'
+            }
+    
+        };
+    
+        fcm.send(message, function(err, response) {
+            if (err) {
+                console.log("Something has gone wrong!"+err);
+                console.log("Respponse:! "+response);
+            } else {
+                // showToast("Successfully sent with response");
+                console.log("Successfully sent with response: ", response);
+            }
+    
+        });
+
+    return res.status(201).json({
+      "stat": "OK",
+      "Error": "",
+      "Verified": true,
+      "message": "Subscribed",
+      "profile": {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        pushEnable: user.pushEnable
+      }
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      "stat": "OK",
+      "Error": error.message,
+      "Verified": true,
+      "message": "Try again"
+    });
+  }
+};
