@@ -78,3 +78,24 @@ export const login = async (req, res)=>{
         return res.status(500).json({"stat":"OK","Error":error.message,"Verified":false,"message":"Internal Server Problem"})
     }
 }
+
+export const profile = async(req,res)=>{
+    try {
+        const id = req._id;
+        if(!id){
+            return res.status(400).json({ "stat":"OK","error": "Missing data","Verified":false,"message":"Access Denied, Please send all data" });
+            //if this happen then we can remove available jwt token from the cookies
+        }
+        const user = await userModel.findById(id,{pass:0})
+        if(!user){
+            return res.status(400).json({ "stat":"OK","error": "user not exist","Verified":false,"message":"Access Denied, Please try again" });
+        }
+        return res.status(201).json({"stat":"OK","Error":"","Verified":true,"message":"user found success","profile":{id:user._id, name:user.name, email:user.email, pushEnable:user.pushEnable}})
+
+    } catch (error) {
+        console.log(error.message)
+        return res.status(500).json({"stat":"OK","Error":error.message,"Verified":true,"message":"Try again"})
+    }
+}
+
+
