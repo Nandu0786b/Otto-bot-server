@@ -110,3 +110,49 @@ export const allAlert = async(req,res)=>{
             message:"Internal Server Problem"})
     }
 }
+
+export const deleteAlert = async (req, res) => {
+    try {
+        // Extract the alertId from the request body
+        const alertId  = req.body._id;
+
+        // Check if alertId is provided
+        if (!alertId) {
+            return res.status(400).json({
+                stat: "OK",
+                error: "Missing alertId",
+                Verified: true,
+                message: "Please provide alertId to delete the alert"
+            });
+        }
+
+        // Find and delete the alert by ID
+        const deletedAlert = await AlertModel.findByIdAndDelete(alertId);
+
+        if (!deletedAlert) {
+            // If no alert was found to delete
+            return res.status(404).json({
+                stat: "OK",
+                error: "Alert not found",
+                Verified: true,
+                message: "No alert found with the specified alertId"
+            });
+        }
+
+        // Return the deleted alert
+        return res.status(200).json({
+            stat: "OK",
+            error: "",
+            Verified: true,
+            message: "Alert deleted successfully",
+            alert: deletedAlert
+        });
+    } catch (error) {
+        return res.status(500).json({
+            stat: "OK",
+            Error: error.message,
+            Verified: false,
+            message: "Internal Server Problem"
+        });
+    }
+}
